@@ -8,6 +8,8 @@ from babel.numbers import format_currency
 app=Flask(__name__)
 #load model and scaler
 model_pipe=joblib.load(open('Model_Pipe.sav','rb'))
+model=joblib.load(open('ChennaiHousepricing.sav','rb'))
+scaler=joblib.load(open('scaler.sav','rb'))
 df= pd.read_csv("Cleaned_data.csv") 
 
 @app.route('/')
@@ -57,7 +59,7 @@ def predict_api():
     new_data=scaler.transform(np.array(list(data.values())).reshape(1,-1))
     output=model.predict(new_data)[0]
     print(output)
-    return jsonify(output)
+    return jsonify(format_currency(output, 'INR', locale='en_IN'))
 
 if __name__=='__main__':
     app.run(debug=True)
